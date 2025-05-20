@@ -21,7 +21,7 @@ import AdminCreateCategoryPage from '@pages/admin/AdminCreateCategoryPage';
 
 function App() {
   const [cartItemCount, setCartItemCount] = useState(0);
-  
+
   // Função para adicionar ao carrinho
   const handleAddToCart = (product) => {
     setCartItemCount(prevCount => prevCount + 1);
@@ -72,12 +72,12 @@ function App() {
               } />
             <Route
               path="/admin/categories"
-              element={ 
+              element={
                 <AdminRoute>
                   <AdminCategoriesPage />
                 </AdminRoute>
               } />
-            <Route 
+            <Route
               path="/admin/categories/new"
               element={
                 <AdminRoute>
@@ -98,7 +98,7 @@ function App() {
                   <AdminCreateProductPage />
                 </AdminRoute>
               } />
-            <Route            
+            <Route
               path="/admin/users"
               element={
                 <AdminRoute>

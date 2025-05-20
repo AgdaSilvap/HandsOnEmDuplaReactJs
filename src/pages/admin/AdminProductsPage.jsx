@@ -24,7 +24,7 @@ const AdminProductsPage = () => {
         queryKey: ['products', currentPage],
         queryFn: () => productService.getProductsByPage(currentPage, PRODUCTS_PER_PAGE),
         keepPreviousData: true,
-    });    
+    });
 
     // Manipulador para mudança de página
     const handlePageChange = (newPage) => {
@@ -52,7 +52,7 @@ const AdminProductsPage = () => {
 
     // Função para editar produto
     const handleEdit = (product) => {
-        navigate(`/admin/products/edit/${product.id}`, { state: { product } });
+        navigate(`/admin/products/${product.id}/edit`);
     };
 
     if (isError) {
@@ -104,7 +104,7 @@ const AdminProductsPage = () => {
                                             <tr key={product.id}>
                                                 <td className="one-line-cell px-3">
                                                     <img
-                                                        src={product.image_url}
+                                                        src={product.image}
                                                         alt={product.title}
                                                         className="rounded"
                                                         style={{ width: 'auto', height: '60px', }} />

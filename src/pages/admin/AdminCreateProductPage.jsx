@@ -112,6 +112,7 @@ const AdminCreateProductPage = () => {
                 const { id, ...productWithoutId } = payload;
                 await createProductMutation.mutateAsync(productWithoutId);
             }
+            console.log(productToEdit);
         } catch (err) {
             toast.error(`Erro ao salvar: ${err.message}`, { icon: '❌' });
         }
