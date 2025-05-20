@@ -52,7 +52,7 @@ const AdminProductsPage = () => {
 
     // Função para editar produto
     const handleEdit = (product) => {
-        navigate(`/admin/products/${product.id}/edit`);
+        navigate(`/admin/products/edit/${product.id}`, { state: { product } });
     };
 
     if (isError) {

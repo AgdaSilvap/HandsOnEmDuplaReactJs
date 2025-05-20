@@ -97,7 +97,8 @@ function App() {
                 <AdminRoute>
                   <AdminCreateProductPage />
                 </AdminRoute>
-              } />
+              }
+            />
             <Route
               path="/admin/users"
               element={

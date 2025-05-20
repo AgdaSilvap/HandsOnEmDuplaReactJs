@@ -15,7 +15,8 @@ const AdminCreateProductPage = () => {
         title: '',
         description: '',
         price: '',
-        image: ''
+        image: '',
+        category: ''
     });
 
     const [errors, setErrors] = useState({});
@@ -37,7 +38,7 @@ const AdminCreateProductPage = () => {
                 description: productToEdit.description,
                 price: productToEdit.price,
                 image: productToEdit.image,
-                id: productToEdit.id || ''
+                category: productToEdit.category || ''
             });
         }
     }, [productToEdit]);
@@ -92,8 +93,8 @@ const AdminCreateProductPage = () => {
         if (!product.image.trim()) {
             newErrors.image = 'A URL da imagem é obrigatória';
         }
-        if (!product.id) {
-            newErrors.id = 'Selecione uma categoria';
+        if (!product.category) {
+            newErrors.category = 'Selecione uma categoria';
         }
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
@@ -109,10 +110,8 @@ const AdminCreateProductPage = () => {
             if (productToEdit) {
                 await updateProductMutation.mutateAsync({ id: productToEdit.id, ...payload });
             } else {
-                const { id, ...productWithoutId } = payload;
-                await createProductMutation.mutateAsync(productWithoutId);
+                await createProductMutation.mutateAsync(payload);
             }
-            console.log(productToEdit);
         } catch (err) {
             toast.error(`Erro ao salvar: ${err.message}`, { icon: '❌' });
         }
@@ -150,12 +149,12 @@ const AdminCreateProductPage = () => {
                                 {errors.description && <div className="invalid-feedback">{errors.description}</div>}
                             </div>
                             <div className="mb-3">
-                                <label htmlFor="id" className="form-label">Categoria</label>
+                                <label htmlFor="category" className="form-label">Categoria</label>
                                 <select
-                                    className={`form-select ${errors.id ? 'is-invalid' : ''}`}
-                                    id="id"
-                                    name="id"
-                                    value={product.id}
+                                    className={`form-select ${errors.category ? 'is-invalid' : ''}`}
+                                    id="category"
+                                    name="category"
+                                    value={product.category}
                                     onChange={handleChange}
                                     disabled={loadingCategories}>
                                     <option value="">Selecione uma categoria...</option>
@@ -165,7 +164,7 @@ const AdminCreateProductPage = () => {
                                         </option>
                                     ))}
                                 </select>
-                                {errors.id && <div className="invalid-feedback">{errors.id}</div>}
+                                {errors.category && <div className="invalid-feedback">{errors.category}</div>}
                                 {loadingCategories &&
                                     <div className="form-text">
                                         <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
