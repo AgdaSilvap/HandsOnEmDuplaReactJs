@@ -11,7 +11,7 @@ const CreateProductPage = () => {
         title: '',
         description: '',
         price: '',
-        image_url: ''
+        image: ''
     });
 
     const [errors, setErrors] = useState({});
@@ -60,10 +60,10 @@ const CreateProductPage = () => {
         } else if (isNaN(Number(product.price)) || Number(product.price) <= 0) {
             newErrors.price = 'O preço deve ser um número positivo';
         }
-        if (!product.image_url.trim()) {
-            newErrors.image_url = 'A URL da imagem é obrigatória';
-        } else if (!product.image_url.match(/^https?:\/\/.+/i)) {
-            newErrors.image_url = 'URL da imagem inválida';
+        if (!product.image.trim()) {
+            newErrors.image = 'A URL da imagem é obrigatória';
+        } else if (!product.image.match(/^https?:\/\/.+/i)) {
+            newErrors.image = 'URL da imagem inválida';
         }
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
@@ -130,20 +130,20 @@ const CreateProductPage = () => {
                                 <label htmlFor="image" className="form-label">URL da Imagem</label>
                                 <input
                                     type="text"
-                                    className={`form-control ${errors.image_url ? 'is-invalid' : ''}`}
-                                    id="image_url"
-                                    name="image_url"
-                                    value={product.image_url}
+                                    className={`form-control ${errors.image ? 'is-invalid' : ''}`}
+                                    id="image"
+                                    name="image"
+                                    value={product.image}
                                     onChange={handleChange}
                                     placeholder="https://..."
                                 />
-                                {errors.image_url && <div className="invalid-feedback">{errors.image_url}</div>}
+                                {errors.image && <div className="invalid-feedback">{errors.image}</div>}
                             </div>
-                            {product.image_url && (
+                            {product.image && (
                                 <div className="mb-3 text-center">
                                     <p>Previsualização:</p>
                                     <img
-                                        src={product.image_url}
+                                        src={product.image}
                                         alt="Previsualização"
                                         className="img-thumbnail"
                                         style={{ maxHeight: '200px' }}

@@ -24,7 +24,7 @@ const CardsGrid = ({ title, items, cols = 4, onAddToCart, currentPage, totalPage
         {items.map((item) => (
           <Card
             key={item.id}
-            image={item.image_url}
+            image={item.image}
             title={item.title}
             description={item.description}
             price={item.price}
