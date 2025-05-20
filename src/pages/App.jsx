@@ -85,6 +85,13 @@ function App() {
                 </AdminRoute>
               } />
             <Route
+              path="/admin/categories/edit/:id"
+              element={
+                <AdminRoute>
+                  <AdminCreateCategoryPage />
+                </AdminRoute>
+              } />
+            <Route
               path="/admin/products/new"
               element={
                 <AdminRoute>
