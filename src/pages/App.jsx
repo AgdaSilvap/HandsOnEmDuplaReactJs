@@ -16,6 +16,8 @@ import ProfilePage from '@pages/auth/ProfilePage';
 import ForgotPasswordPage from '@pages/auth/ForgotPasswordPage';
 import UpdatePasswordPage from '@pages/auth/UpdatePasswordPage';
 import AdminProductsPage from '@pages/admin/AdminProductsPage';
+import AdminCategoriesPage from '@pages/admin/AdminCategoriesPage';
+import AdminCreateCategoryPage from '@pages/admin/AdminCreateCategoryPage';
 
 function App() {
   const [cartItemCount, setCartItemCount] = useState(0);
@@ -66,6 +68,20 @@ function App() {
               element={
                 <AdminRoute>
                   <AdminProductsPage />
+                </AdminRoute>
+              } />
+            <Route
+              path="/admin/categories"
+              element={ 
+                <AdminRoute>
+                  <AdminCategoriesPage />
+                </AdminRoute>
+              } />
+            <Route 
+              path="/admin/categories/new"
+              element={
+                <AdminRoute>
+                  <AdminCreateCategoryPage />
                 </AdminRoute>
               } />
             <Route
