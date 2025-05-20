@@ -1,137 +1,148 @@
-// src/pages/admin/AdminCreatecategoryPage.jsx
-import { useState, useEffect, useRef } from 'react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'react-hot-toast';
 import categoryService from '@services/categoryService';
 
-const AdminCreatecategoryPage = () => {
-	const navigate = useNavigate();
-	const { state } = useLocation();
-	const queryClient = useQueryClient();
-	const categoryToEdit = state?.category;
-	const [category, setcategory] = useState({
-		name: ''
-	});
+const AdminCreateCategoryPage = () => {
+    const { id } = useParams();
+    const location = useLocation();
+    const navigate = useNavigate();
+    const queryClient = useQueryClient();
+    const isEditMode = !!id;
 
-	const [errors, setErrors] = useState({});
+    // Estado do formulário
+    const [formData, setFormData] = useState({
+        name: ''
+    });
 
-	// Se for um Categoria para editar, inicializa o estado com os dados do Categoria
-	useEffect(() => {
-		if (categoryToEdit) {
-			setcategory({
-				name: categoryToEdit.name
-			});
-		}
-	}, [categoryToEdit]);
+    // Buscar dados da categoria se estiver editando
+    const { data: category, isLoading: loadingCategory } = useQuery({
+        queryKey: ['category', id],
+        queryFn: () => categoryService.getCategoryById(id),
+        enabled: isEditMode,
+        onSuccess: (data) => {
+            setFormData({
+                name: data.name || ''
+            });
+        },
+        onError: (error) => {
+            toast.error(`Erro ao carregar categoria: ${error.message}`);
+            navigate('/admin/categories');
+        }
+    });
 
-	const createCategoryMutation = useMutation({
-		mutationFn: categoryService.createcategory,
-		onSuccess: () => {
-			toast.success('Categoria criado com sucesso!', { icon: '✅' });
-			navigate('/admin/categorys');
-		},
-		onError: (error) => {
-			toast.error(`Erro ao criar Categoria: ${error.message}`, { icon: '❌' });
-		}
-	});
+    // Usar dados do state da navegação se disponíveis
+    useEffect(() => {
+        if (location.state?.category) {
+            setFormData({
+                name: location.state.category.name || '',
+            });
+        }
+    }, [location.state]);
 
-	const updatecategoryMutation = useMutation({
-		mutationFn: ({ id, ...fields }) => categoryService.updatecategory(id, fields),
-		onSuccess: () => {
-			queryClient.invalidateQueries(['categorys']).then(() => {
-				toast.success('Categoria atualizado com sucesso!', { icon: '✅' });
-				navigate('/admin/categorys');
-			}).catch((error) => {
-				toast.error(`Erro ao atualizar lista de Categorias: ${error.message}`, { icon: '❌' });
-			});
-		},
-		onError: (error) => {
-			toast.error(`Erro ao atualizar Categoria: ${error.message}`, { icon: '❌' });
-		}
-	});
+    // Mutação para criar/atualizar categoria
+    const saveMutation = useMutation({
+        mutationFn: (data) => {
+            return isEditMode
+                ? categoryService.updateCategory(id, data)
+                : categoryService.createCategory(data);
+        },
+        onSuccess: () => {
+            toast.success(
+                isEditMode ? 'Categoria atualizada com sucesso!' : 'Categoria criada com sucesso!',
+                { icon: '✅' }
+            );
+            queryClient.invalidateQueries(['categories']);
+            navigate('/admin/categories');
+        },
+        onError: (error) => {
+            toast.error(`Erro: ${error.message}`, { icon: '❌' });
+        }
+    });
 
-	const handleChange = (e) => {
-		const { name, value } = e.target;
-		setcategory((prev) => ({ ...prev, [name]: value }));
-		if (errors[name]) {
-			setErrors((prev) => ({ ...prev, [name]: '' }));
-		}
-	};
+    // Lidar com envio do formulário
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        // Validação simples
+        if (!formData.name) {
+            toast.error('O nome da categoria é obrigatório');
+            return;
+        }
+        saveMutation.mutate(formData);
+    };
 
-	const validateForm = () => {
-		const newErrors = {};
-		if (!category.name.trim()) {
-			newErrors.name = 'O nome da categoria é obrigatório';
-		}
-		setErrors(newErrors);
-		return Object.keys(newErrors).length === 0;
-	};
+    // Lidar com mudanças no formulário
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData((prev) => ({
+            ...prev,
+            [name]: value
+        }));
+    };
 
-	const handleSubmit = async e => {
-		e.preventDefault();
-		if (!validateForm()) return;
+    return (
+        <div className="row justify-content-center">
+            <div className="col-md-8 col-lg-6">
+                <div className="card">
+                    <div className="card-header text-bg-light py-3">
+                        <h2 className="card-title mb-0">
+                            {isEditMode ? 'Editar Categoria' : 'Nova Categoria'}
+                        </h2>
+                    </div>
+                    <div className="card-body p-4">
+                        {loadingCategory ? (
+                            <div className="text-center my-5">
+                                <div className="spinner-border" role="status"></div>
+                            </div>
+                        ) : (
+                            <form onSubmit={handleSubmit}>
+                                <div className="mb-3">
+                                    <label htmlFor="name" className="form-label">
+                                        Nome da Categoria *
+                                    </label>
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        id="name"
+                                        name="name"
+                                        value={formData.name}
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                </div>
 
-		try {
-			const payload = { ...category };
-
-			if (categoryToEdit) {
-				await updatecategoryMutation.mutateAsync({ id: categoryToEdit.id, ...payload });
-			} else {
-				await createCategoryMutation.mutateAsync(payload);
-			}
-		} catch (err) {
-			toast.error(`Erro ao salvar: ${err.message}`, { icon: '❌' });
-		}
-	};
-
-	return (
-		<div className="row justify-content-center">
-			<div className="col-md-8">
-				<div className="card">
-					<div className="card-header text-bg-light">
-						<h2 className="mb-0">{categoryToEdit ? 'Alterar Categoria' : 'Nova Categoria'}</h2>
-					</div>
-					<div className="card-body">
-						<form onSubmit={handleSubmit}>
-							<div className="mb-3">
-								<label htmlFor="title" className="form-label">Título</label>
-								<input
-									type="text"
-									className={`form-control ${errors.title ? 'is-invalid' : ''}`}
-									id="title"
-									name="title"
-									value={category.title}
-									onChange={handleChange} autoFocus />
-								{errors.title && <div className="invalid-feedback">{errors.title}</div>}
-							</div>
-							
-
-							<div className="d-flex">
-								<button
-									type="submit"
-									className="btn btn-success me-2"
-									disabled={createCategoryMutation.isPending || updatecategoryMutation.isPending}>
-									{createCategoryMutation.isPending || updatecategoryMutation.isPending ? (
-										<>
-											<span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-											Salvando...
-										</>
-									) : 'Salvar Categoria'}
-								</button>
-								<button
-									type="button"
-									className="btn btn-secondary"
-									onClick={() => navigate('/admin/categorys')}>
-									Cancelar
-								</button>
-							</div>
-						</form>
-					</div>
-				</div>
-			</div>
-		</div>
-	);
+                                <div className="d-flex gap-2 mt-4">
+                                    <button
+                                        type="submit"
+                                        className="btn btn-primary"
+                                        disabled={saveMutation.isPending}>
+                                        {saveMutation.isPending ? (
+                                            <>
+                                                <span
+                                                    className="spinner-border spinner-border-sm me-2"
+                                                    role="status"
+                                                    aria-hidden="true"></span>
+                                                Salvando...
+                                            </>
+                                        ) : (
+                                            'Salvar Categoria'
+                                        )}
+                                    </button>
+                                    <button
+                                        type="button"
+                                        className="btn btn-outline-secondary"
+                                        onClick={() => navigate('/admin/categories')}>
+                                        Cancelar
+                                    </button>
+                                </div>
+                            </form>
+                        )}
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
 };
 
-export default AdminCreatecategoryPage;
+export default AdminCreateCategoryPage; 

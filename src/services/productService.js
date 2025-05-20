@@ -7,7 +7,7 @@ const productService = {
     
     const { data, error, count } = await supabase
       .from('products')
-      .select('*', { count: 'exact' })
+      .select('*, categories(*)', { count: 'exact' })
       .range(from, to)
       .order('title', { ascending: true });
     if (error) {
@@ -24,7 +24,7 @@ const productService = {
   async getProductById(id) {
     const { data, error } = await supabase
       .from('products')
-      .select('*')
+      .select('*, categories(*)')
       .eq('id', id)
       .single();
     if (error) {

@@ -87,6 +87,7 @@ const AdminProductsPage = () => {
                                         <tr>
                                             <th className="one-line-cell">Foto</th>
                                             <th>Nome</th>
+                                            <th>Categoria</th>
                                             <th>Preço</th>
                                             <th className="text-center">Ações</th>
                                         </tr>
@@ -94,7 +95,7 @@ const AdminProductsPage = () => {
                                     <tbody>
                                         {data?.products?.length === 0 && (
                                             <tr>
-                                                <td colSpan={4} className="text-center py-4">
+                                                <td colSpan={5} className="text-center py-4">
                                                     Nenhum produto encontrado.
                                                 </td>
                                             </tr>
@@ -109,6 +110,7 @@ const AdminProductsPage = () => {
                                                         style={{ width: 'auto', height: '60px', }} />
                                                 </td>
                                                 <td>{product.title}</td>
+                                                <td>{product.categories?.name || '—'}</td>
                                                 <td className="one-line-cell">{formatPrice(product.price)}</td>
                                                 <td className="text-center one-line-cell px-3">
                                                     <button
