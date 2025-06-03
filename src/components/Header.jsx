@@ -8,7 +8,7 @@ import profileService from '@services/profileService';
 
 const Header = ({ cartCount = 0 }) => {
   const { user, isAdmin } = useAuth();
-  const [avatarUrl, setAvatarUrl] = useState('https://placehold.co/40?text=A');  
+  const [avatarUrl, setAvatarUrl] = useState('https://placehold.co/40?text=A');
 
   // Buscar o perfil do usuário para obter o avatar
   useEffect(() => {
@@ -17,7 +17,7 @@ const Header = ({ cartCount = 0 }) => {
         try {
           // Limpar o avatar ao trocar de usuário
           setAvatarUrl('https://placehold.co/40?text=A');
-          
+
           const profile = await profileService.getProfile();
           if (profile.avatar_url) {
             setAvatarUrl(profile.avatar_url);
@@ -76,6 +76,7 @@ const Header = ({ cartCount = 0 }) => {
                         <li><Link className="dropdown-item" to="/admin/users">Usuários</Link></li>
                         <li><Link className="dropdown-item" to="/admin/products">Produtos</Link></li>
                         <li><Link className="dropdown-item" to="/admin/categories">Categorias</Link></li>
+                        <li><Link className="dropdown-item" to="/admin/carriers">Transportadoras</Link></li>
                         <li><hr className="dropdown-divider" /></li>
                       </>
                     )}
