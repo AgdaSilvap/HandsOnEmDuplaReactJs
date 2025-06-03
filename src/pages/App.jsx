@@ -18,6 +18,8 @@ import UpdatePasswordPage from '@pages/auth/UpdatePasswordPage';
 import AdminProductsPage from '@pages/admin/AdminProductsPage';
 import AdminCategoriesPage from '@pages/admin/AdminCategoriesPage';
 import AdminCreateCategoryPage from '@pages/admin/AdminCreateCategoryPage';
+import AdminCarriesPage from './admin/AdminCarrierPage';
+import AdminCreateCarrierPage from './admin/AdminCreateCarriersPage';
 
 function App() {
   const [cartItemCount, setCartItemCount] = useState(0);
@@ -89,6 +91,27 @@ function App() {
               element={
                 <AdminRoute>
                   <AdminCreateCategoryPage />
+                </AdminRoute>
+              } />
+            <Route
+              path="/admin/carriers"
+              element={
+                <AdminRoute>
+                  <AdminCarriesPage />
+                </AdminRoute>
+              } />
+            <Route
+              path="/admin/carriers/new"
+              element={
+                <AdminRoute>
+                  <AdminCreateCarrierPage />
+                </AdminRoute>
+              } />
+            <Route
+              path="/admin/carriers/edit/:id"
+              element={
+                <AdminRoute>
+                  <AdminCreateCarrierPage />
                 </AdminRoute>
               } />
             <Route
